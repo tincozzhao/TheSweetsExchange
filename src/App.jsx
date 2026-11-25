@@ -143,7 +143,8 @@ export default function App() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-            className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-burnt px-5 py-3 font-bold text-vanilla shadow-paper transition-colors hover:bg-cocoa"
+            style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom))', right: 'max(1.25rem, env(safe-area-inset-right))' }}
+            className="fixed z-40 inline-flex items-center gap-2 rounded-full bg-burnt px-5 py-3 font-bold text-vanilla shadow-paper transition-colors hover:bg-cocoa"
           >
             <ShoppingBag className="h-5 w-5" aria-hidden="true" />
             {count} in your order

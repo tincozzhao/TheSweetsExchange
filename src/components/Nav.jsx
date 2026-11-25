@@ -56,6 +56,7 @@ export default function Nav({ introDone, routeKey }) {
       initial={{ y: -48, opacity: 0 }}
       animate={introDone ? { y: 0, opacity: 1 } : { y: -48, opacity: 0 }}
       transition={{ duration: 0.8, ease: EASE }}
+      style={{ paddingTop: 'env(safe-area-inset-top)', paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         solid ? 'bg-vanilla shadow-soft' : 'bg-transparent'
       }`}
