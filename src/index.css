@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-vanilla font-sans text-cocoa antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-serif;
+  }
+
+  ::selection {
+    background: #e8b4b8;
+    color: #593a2b;
+  }
+
+  /* Custom cursor: a pair of golden bread tongs. The hotspot (6, 8) sits between the tips.
+     The image is embedded in the CSS (also kept as src/assets/cursor.png), so no file path
+     can break. Touch screens ignore custom cursors. */
+  html,
+  body,
+  a,
+  button,
+  summary,
+  label,
+  [role='button'] {
+    cursor: url("data:image/png;base64,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") 6 8, auto;
+  }
+  input,
+  textarea {
+    cursor: text;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 3px solid #c96b42;
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* Subtle paper grain, drawn with an inline SVG so there is nothing to download. */
+  .paper {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.23 0 0 0 0 0.17 0 0 0 0.11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Lines a full-bleed scroller up with the centred 80rem content column. */
+  .edge-pad {
+    padding-inline: max(1.25rem, calc((100vw - 80rem) / 2 + 2rem));
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[0.95rem] font-bold tracking-wide shadow-soft transition-all duration-300 ease-out;
+  }
+  .btn-primary {
+    @apply bg-cocoa text-vanilla hover:bg-burnt hover:shadow-paper;
+  }
+  .btn-secondary {
+    @apply border-2 border-cocoa bg-transparent text-cocoa hover:bg-cocoa hover:text-vanilla;
+  }
+  .btn-pink {
+    @apply bg-strawberry text-cocoa hover:bg-butter hover:shadow-paper;
+  }
+
+  .field {
+    @apply w-full rounded-2xl border-2 border-cocoa/20 bg-vanilla px-4 py-3 text-cocoa placeholder:text-cocoa/40 transition-colors duration-200 focus:border-burnt focus:outline-none;
+  }
+}
+
+/* Reduced motion: stop continuous animation and smooth scrolling entirely. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-spin-slow,
+  .animate-bob {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
