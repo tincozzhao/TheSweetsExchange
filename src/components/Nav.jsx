@@ -5,7 +5,7 @@ import Wordmark from './Wordmark.jsx';
 import { NAV_LINKS } from '../data/site.js';
 import { EASE } from './Reveal.jsx';
 
-export default function Nav({ introDone }) {
+export default function Nav({ introDone, routeKey }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState('home');
@@ -28,6 +28,11 @@ export default function Nav({ introDone }) {
 
   // Highlight the link for whichever section is in the middle of the screen.
   useEffect(() => {
+    // On a cookie page the Menu link stays highlighted; the home sections aren't mounted.
+    if (routeKey === 'cookie') {
+      setActive('menu');
+      return undefined;
+    }
     if (!('IntersectionObserver' in window)) return undefined;
     const els = NAV_LINKS.filter((l) => !l.external)
       .map((l) => document.getElementById(l.id))
@@ -42,7 +47,7 @@ export default function Nav({ introDone }) {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [routeKey]);
 
   const solid = scrolled || open;
 

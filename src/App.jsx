@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 import Loader, { shouldShowIntro } from './components/Loader.jsx';
@@ -10,7 +10,10 @@ import OurStory from './components/OurStory.jsx';
 import InstagramGallery from './components/InstagramGallery.jsx';
 import Order from './components/Order.jsx';
 import Footer from './components/Footer.jsx';
+import CookiePage from './components/CookiePage.jsx';
 import { SITE } from './data/site.js';
+import { COOKIE_PAGES } from './data/products.js';
+import { useRoute } from './lib/router.js';
 
 export default function App() {
   const [intro] = useState(shouldShowIntro);
@@ -33,6 +36,50 @@ export default function App() {
 
   const count = Object.values(order).reduce((sum, n) => sum + n, 0);
 
+  // Which page is showing: the home page or one cookie's page (#/cookies/<slug>).
+  const route = useRoute();
+  const cookie = route.name === 'cookie' ? COOKIE_PAGES.find((c) => c.slug === route.slug) : null;
+  const view = cookie ? 'cookie' : 'home';
+
+  // After switching pages, put the visitor in the right place: the top of a cookie page,
+  // or the section named in the link (#menu, #order …) when returning to the home page.
+  const previousView = useRef(null);
+  useEffect(() => {
+    const came = previousView.current;
+    previousView.current = view;
+    if (view === 'cookie') {
+      // Cookie -> cookie: glide back up. (Home -> cookie is handled when the home page exits.)
+      if (came === 'cookie') window.scrollTo({ top: 0, behavior: 'smooth' });
+      return undefined;
+    }
+    if (came === 'home') return undefined; // ordinary in-page anchors scroll by themselves
+    const id = route.hash.replace(/^#/, '');
+    const wantsSection = id && !id.startsWith('/');
+    if (!wantsSection) {
+      if (came) window.scrollTo({ top: 0, behavior: 'auto' });
+      return undefined;
+    }
+    // The home page mounts just after the cookie page fades out, so wait for the section.
+    let tries = 0;
+    let timer;
+    const go = () => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: came ? 'smooth' : 'auto', block: 'start' });
+      else if (tries++ < 25) timer = setTimeout(go, 60);
+    };
+    timer = setTimeout(go, 60);
+    return () => clearTimeout(timer);
+  }, [view, route.hash]);
+
+  // "Order some sweetness" on a cookie page: add it, then jump to the order form.
+  const orderCookie = useCallback(
+    (id) => {
+      addItem(id);
+      window.location.hash = '#order';
+    },
+    [addItem],
+  );
+
   return (
     // reducedMotion="user" strips movement for visitors who ask for less motion.
     <MotionConfig reducedMotion="user">
@@ -45,15 +92,43 @@ export default function App() {
         Skip to content
       </a>
 
-      <Nav introDone={introDone} />
+      <Nav introDone={introDone} routeKey={view} />
 
       <main id="main">
-        <Hero introDone={introDone} />
-        <FreshlyBaked order={order} onAdd={addItem} />
-        {SITE.features.boxes && <LittleBox order={order} onAdd={addItem} />}
-        <OurStory />
-        <InstagramGallery />
-        <Order order={order} setQty={setQty} />
+        <AnimatePresence
+          mode="wait"
+          initial={false}
+          onExitComplete={() => {
+            if (view === 'cookie') window.scrollTo({ top: 0, behavior: 'auto' });
+          }}
+        >
+          {view === 'cookie' ? (
+            <motion.div
+              key="cookie"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              <CookiePage cookie={cookie} qty={order[cookie.id] || 0} onOrder={orderCookie} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="home"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              <Hero introDone={introDone} />
+              <FreshlyBaked order={order} onAdd={addItem} />
+              {SITE.features.boxes && <LittleBox order={order} onAdd={addItem} />}
+              <OurStory />
+              <InstagramGallery />
+              <Order order={order} setQty={setQty} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       <Footer />

@@ -1,18 +1,12 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, Clock, Copy, Instagram, Mail, MapPin, Minus, Plus, Truck } from 'lucide-react';
+import { Check, Copy, Instagram, Mail, Minus, Plus } from 'lucide-react';
 import Reveal, { EASE } from './Reveal.jsx';
 import { Cookie, Float, Whisk } from './Doodles.jsx';
 import { AVAILABILITY, ORDERABLE } from '../data/products.js';
 import { SITE } from '../data/site.js';
 import { formatPrice } from '../lib/format.js';
 import { buildMessage } from '../lib/orderMessage.js';
-
-const INFO = [
-  { key: 'pickup', icon: MapPin, title: 'Pickup', fallback: 'Pickup details haven’t been published on this page yet — send us a message and ask.' },
-  { key: 'delivery', icon: Truck, title: 'Delivery', fallback: 'Delivery details haven’t been published on this page yet — send us a message and ask.' },
-  { key: 'leadTime', icon: Clock, title: 'How much notice', fallback: 'Tell us when you need your sweets and we’ll let you know if it’s possible.' },
-];
 
 export default function Order({ order, setQty }) {
   const [form, setForm] = useState({ name: '', contact: '', date: '', notes: '' });
@@ -118,28 +112,6 @@ export default function Order({ order, setQty }) {
               everything &mdash; nothing is charged on this site.
             </p>
           </Reveal>
-
-          <ul className="mt-10 space-y-5">
-            {INFO.map(({ key, icon: Icon, title, fallback }, i) => {
-              const value = SITE.fulfilment[key];
-              return (
-                <Reveal as="li" key={key} delay={0.08 * i} className="flex gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-vanilla text-burnt shadow-soft">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-semibold leading-tight text-cocoa">{title}</h3>
-                    <p className="mt-1 leading-relaxed text-cocoa/80">{value || fallback}</p>
-                    {!value && SITE.showPlaceholderFlags && (
-                      <p className="mt-1 font-hand text-xl leading-tight text-burnt">
-                        TODO: add fulfilment.{key} in src/data/site.js
-                      </p>
-                    )}
-                  </div>
-                </Reveal>
-              );
-            })}
-          </ul>
         </div>
 
         {/* Order form */}
@@ -342,12 +314,6 @@ export default function Order({ order, setQty }) {
                 )}
               </AnimatePresence>
             </div>
-
-            {!email && SITE.showPlaceholderFlags && (
-              <p className="mt-2 font-hand text-xl text-burnt">
-                TODO: add contact.email in src/data/site.js to switch on &ldquo;Send by email&rdquo;
-              </p>
-            )}
           </form>
         </Reveal>
       </div>

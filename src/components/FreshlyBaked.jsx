@@ -1,12 +1,14 @@
 import { useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Check, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Plus } from 'lucide-react';
 import Photo from './Photo.jsx';
+import { CookieOnPlaid } from './PlaidPhoto.jsx';
 import Reveal, { EASE } from './Reveal.jsx';
 import { Wheat } from './Doodles.jsx';
 import { AVAILABILITY, PRODUCTS } from '../data/products.js';
 import { SITE } from '../data/site.js';
 import { formatPrice } from '../lib/format.js';
+import { cookieHref } from '../lib/router.js';
 
 export default function FreshlyBaked({ order, onAdd }) {
   const scroller = useRef(null);
@@ -67,6 +69,26 @@ export default function FreshlyBaked({ order, onAdd }) {
           const avail = p.availability ? AVAILABILITY[p.availability] : null;
           const soldOut = p.availability === 'sold-out';
           const qty = order[p.id] || 0;
+          // Cookies with a page are clickable: photo, name and "details" link all open it.
+          const href = p.page ? cookieHref(p.slug) : null;
+          const photo = p.image ? (
+            <Photo
+              src={p.image}
+              alt={p.imageAlt}
+              label={p.name}
+              tone={['butter', 'pink', 'beige', 'orange'][i % 4]}
+              imgClassName="transition-transform duration-[900ms] ease-out group-hover:scale-110"
+            />
+          ) : p.page ? (
+            <CookieOnPlaid
+              src={p.page.top}
+              alt={p.page.topAlt}
+              className="h-full w-full"
+              tilt="-rotate-2 group-hover:scale-110"
+            />
+          ) : (
+            <Photo src={null} label={p.name} tone={['butter', 'pink', 'beige', 'orange'][i % 4]} />
+          );
 
           return (
             <motion.article
@@ -78,25 +100,29 @@ export default function FreshlyBaked({ order, onAdd }) {
               className="group w-[78vw] max-w-[380px] shrink-0 snap-start sm:w-[360px]"
             >
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-paper">
-                <Photo
-                  src={p.image}
-                  alt={p.imageAlt}
-                  label={p.name}
-                  tone={['butter', 'pink', 'beige', 'orange'][i % 4]}
-                  imgClassName="transition-transform duration-[900ms] ease-out group-hover:scale-110"
-                />
-                <span className="absolute left-4 top-4 font-hand text-2xl text-vanilla drop-shadow">
+                {href ? (
+                  <a
+                    href={href}
+                    aria-label={`${p.name}: see the full cookie and what's inside`}
+                    className="block h-full w-full"
+                  >
+                    {photo}
+                  </a>
+                ) : (
+                  photo
+                )}
+                <span className="pointer-events-none absolute left-4 top-4 font-hand text-2xl text-vanilla drop-shadow">
                   no. {String(i + 1).padStart(2, '0')}
                 </span>
                 {avail && (
                   <span
-                    className={`absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${avail.tone}`}
+                    className={`pointer-events-none absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${avail.tone}`}
                   >
                     {avail.label}
                   </span>
                 )}
                 {p.placeholder && SITE.showPlaceholderFlags && (
-                  <span className="absolute bottom-4 left-4 -rotate-3 rounded-md bg-vanilla px-3 py-1 font-hand text-xl text-burnt shadow-soft">
+                  <span className="pointer-events-none absolute bottom-4 left-4 -rotate-3 rounded-md bg-vanilla px-3 py-1 font-hand text-xl text-burnt shadow-soft">
                     sample slot
                   </span>
                 )}
@@ -104,7 +130,15 @@ export default function FreshlyBaked({ order, onAdd }) {
 
               <div className="px-1 pt-5">
                 <div className="flex items-baseline justify-between gap-4">
-                  <h3 className="text-2xl font-semibold leading-tight text-cocoa">{p.name}</h3>
+                  <h3 className="text-2xl font-semibold leading-tight text-cocoa">
+                    {href ? (
+                      <a href={href} className="transition-colors duration-300 hover:text-burnt">
+                        {p.name}
+                      </a>
+                    ) : (
+                      p.name
+                    )}
+                  </h3>
                   {price && (
                     <span className="shrink-0 text-right font-serif text-xl leading-tight text-burnt">
                       {price}
@@ -118,11 +152,12 @@ export default function FreshlyBaked({ order, onAdd }) {
                 </div>
                 <p className="mt-2 leading-relaxed text-cocoa/75">{p.description}</p>
 
+                <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
                 <button
                   type="button"
                   onClick={() => onAdd(p.id)}
                   disabled={soldOut}
-                  className={`mt-4 inline-flex items-center gap-2 rounded-full border-2 px-5 py-2.5 text-sm font-bold transition-all duration-300 ${
+                  className={`inline-flex items-center gap-2 rounded-full border-2 px-5 py-2.5 text-sm font-bold transition-all duration-300 ${
                     soldOut
                       ? 'cursor-not-allowed border-cocoa/20 text-cocoa/40'
                       : qty
@@ -138,6 +173,17 @@ export default function FreshlyBaked({ order, onAdd }) {
                   {soldOut ? 'Sold out' : qty ? `In your order · ${qty}` : 'Add to order'}
                   <span className="sr-only"> {p.name}</span>
                 </button>
+                {href && (
+                  <a
+                    href={href}
+                    className="inline-flex items-center gap-1 text-sm font-bold text-burnt underline-offset-4 hover:underline"
+                  >
+                    See inside
+                    <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                    <span className="sr-only"> {p.name}</span>
+                  </a>
+                )}
+                </div>
               </div>
             </motion.article>
           );

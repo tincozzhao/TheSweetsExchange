@@ -35,3 +35,9 @@ Prices, flavors and photos now come from the bakery's menu, Instagram posts and 
 - [ ] Add your real site address as a canonical URL and `og:url` in `index.html`
 - [ ] Optionally add a social-share image (`og:image`) in `index.html`
 - [ ] Consider adding address / hours to the `Bakery` structured data in `index.html` once verified
+
+## Cookie pages – please confirm
+- Espresso Brownie and Red Velvet are priced $12 per box of 3 (assumed, matching the other cookies).
+- Strawberry Shortcake and Chocolate Strawberry have no photos/pages yet.
+- "Ube Matcha Latte" was renamed "Ube Matcha".
+- Flavor/texture chips are paraphrased from the descriptions; no ingredients, allergens or nutrition were added.

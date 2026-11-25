@@ -113,3 +113,9 @@ already has a `README.md`, `index.html` or `.gitignore`, merge by hand rather th
 │                           InstagramGallery, Order, Footer, Doodles, …
 └── .github/workflows/deploy.yml
 ```
+
+## Cookie pages
+
+Each cookie has its own shareable page, using hash URLs so they work on GitHub Pages:
+`#/cookies/smores`, `strawberry-matcha`, `espresso-brownie`, `chocolate-chip`, `earl-grey`, `ube-matcha`, `red-velvet`.
+Content lives in `src/data/products.js` (the `page` field). Photos are in `public/images/cookies/`, the plaid cloth is `public/images/plaid.jpg`.

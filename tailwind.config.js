@@ -10,6 +10,12 @@ export default {
         strawberry: '#E8B4B8', // Strawberry Pink
         burnt: '#C96B42', // Burnt Orange
         beige: '#E8D8C3', // Warm Beige
+        // Cookie-page palette
+        blush: '#EBCDD4', // Blush pink
+        cream: '#FFF8EF', // Warm cream
+        choc: '#5C3A2E', // Chocolate brown
+        rose: '#C98798', // Muted rose
+        sage: '#A8B58A', // Soft matcha green
       },
       fontFamily: {
         serif: ['Fraunces', 'Georgia', 'Cambria', 'serif'],
