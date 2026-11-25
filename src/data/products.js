@@ -57,8 +57,6 @@ export const PRODUCTS = [
     id: 'smores',
     name: 'S’mores',
     description: 'Melty chocolate and gooey, toasted marshmallow in a golden cookie.',
-    image: 'images/products/smores.jpg',
-    imageAlt: 'Three s’mores cookies on a plate, split open to show melted marshmallow',
     page: {
       tagline: 'A little campfire nostalgia',
       story:
@@ -75,8 +73,6 @@ export const PRODUCTS = [
     id: 'strawberry-matcha',
     name: 'Strawberry Matcha',
     description: 'Earthy matcha meets bright strawberry, with a creamy drizzle and strawberry crumbles.',
-    image: 'images/products/strawberry-matcha.jpg',
-    imageAlt: 'Strawberry matcha cookies in a box with white chocolate drizzle and freeze-dried strawberry',
     page: {
       tagline: 'A berry sweet match',
       story:
@@ -109,8 +105,6 @@ export const PRODUCTS = [
     id: 'chocolate-chip',
     name: 'Chocolate Chip',
     description: 'Golden edges, a soft chewy center, chocolate chunks and flaky sea salt.',
-    image: 'images/products/chocolate-chip.jpg',
-    imageAlt: 'A box of chocolate chip cookies with flaky salt on top',
     page: {
       tagline: 'The timeless classic',
       story:
@@ -127,8 +121,6 @@ export const PRODUCTS = [
     id: 'earl-grey',
     name: 'Earl Grey',
     description: 'A fragrant tea cookie with the floral, citrus notes of Earl Grey.',
-    image: 'images/products/earl-grey.jpg',
-    imageAlt: 'An Earl Grey cookie flecked with tea leaves and coated in sugar crystals',
     page: {
       tagline: 'A little afternoon tea',
       story:
@@ -145,8 +137,6 @@ export const PRODUCTS = [
     id: 'ube-matcha',
     name: 'Ube Matcha',
     description: 'Purple ube and earthy green matcha swirled into one soft, marbled cookie.',
-    image: 'images/products/ube-matcha-latte.jpg',
-    imageAlt: 'Purple ube and green matcha swirled cookies stacked in a box',
     page: {
       tagline: 'A swirl of two favorites',
       story:
