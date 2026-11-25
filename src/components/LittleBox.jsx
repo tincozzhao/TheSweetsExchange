@@ -55,12 +55,23 @@ export default function LittleBox({ order, onAdd }) {
           </div>
           <div className="absolute -bottom-8 -right-2 hidden w-40 rotate-6 overflow-hidden rounded-3xl border-[6px] border-vanilla shadow-paper sm:block md:w-52">
             <div className="aspect-square">
-              <Photo
-                src="images/story/close-up.jpg"
-                alt="Close-up of chocolate chip cookies with flaky salt"
-                label="Close-up detail"
-                tone="beige"
-              />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={box.id}
+                  className="h-full w-full"
+                  initial={{ opacity: 0, scale: 1.08 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.45, ease: EASE }}
+                >
+                  <Photo
+                    src={box.detailImage}
+                    alt={box.detailAlt}
+                    label={`${box.name} — close-up`}
+                    tone="beige"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
           <Float className="absolute -left-5 -top-6" duration={6}>

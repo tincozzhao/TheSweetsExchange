@@ -92,6 +92,9 @@ export const BOXES = [
     availability: 'available',
     image: 'images/products/assorted-box.jpg',
     imageAlt: 'A white box of assorted cookies including chocolate chip and Earl Grey',
+    // Small close-up photo that overlaps the corner of the big photo.
+    detailImage: 'images/story/close-up.jpg',
+    detailAlt: 'Close-up of chocolate chip cookies with flaky salt',
   },
   {
     id: 'cinnamon-roll-box',
@@ -105,6 +108,8 @@ export const BOXES = [
     availability: 'available',
     image: 'images/gallery/cinnamon-rolls-1.jpg',
     imageAlt: 'A pan of freshly iced cinnamon rolls',
+    detailImage: 'images/products/cinnamon-roll-close-up.jpg',
+    detailAlt: 'Close-up of frosted cinnamon rolls with swirls of cinnamon',
   },
 ];
 
