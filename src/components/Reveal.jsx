@@ -12,12 +12,13 @@ export default function Reveal({
   className = '',
   as = 'div',
   amount = 0.2,
+  instant = false,
 }) {
   const Tag = motion[as] || motion.div;
   return (
     <Tag
       className={className}
-      initial={{ opacity: 0, y }}
+      initial={instant ? false : { opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}
       transition={{ duration: 0.85, delay, ease: EASE }}

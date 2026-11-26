@@ -104,6 +104,22 @@
     display: none;
   }
 
+  /* A slim, always-visible bar so the menu can be dragged sideways. */
+  .slim-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #d98a8a transparent;
+  }
+  .slim-scrollbar::-webkit-scrollbar {
+    height: 8px;
+  }
+  .slim-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .slim-scrollbar::-webkit-scrollbar-thumb {
+    background: #d98a8a;
+    border-radius: 9999px;
+  }
+
   /* Lines a full-bleed scroller up with the centred 80rem content column. */
   .edge-pad {
     padding-inline: max(1.25rem, calc((100vw - 80rem) / 2 + 2rem));

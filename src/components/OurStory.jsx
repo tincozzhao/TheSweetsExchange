@@ -18,7 +18,9 @@ const NOTES = [
   { text: 'sweeter together', cls: 'left-[0%] bottom-[2%]', rot: -6 },
 ];
 
-export default function OurStory() {
+// `instant`: skip the pieces' own entrance animations so the whole page moves as one
+// (used when a page transition already slides the page in).
+export default function OurStory({ instant = false }) {
   const { story } = SITE;
   const paragraphs = story.paragraphs.filter((p) => !p.placeholder || SITE.showPlaceholderFlags);
 
@@ -32,7 +34,7 @@ export default function OurStory() {
             return (
               <motion.figure
                 key={i}
-                initial={{ opacity: 0, y: 50, rotate: frame.rot }}
+                initial={instant ? false : { opacity: 0, y: 50, rotate: frame.rot }}
                 whileInView={{ opacity: 1, y: 0, rotate: frame.rot }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.9, delay: i * 0.15, ease: EASE }}
@@ -63,7 +65,7 @@ export default function OurStory() {
           {NOTES.map((note) => (
             <motion.p
               key={note.text}
-              initial={{ opacity: 0, scale: 0.7, rotate: note.rot }}
+              initial={instant ? false : { opacity: 0, scale: 0.7, rotate: note.rot }}
               whileInView={{ opacity: 1, scale: 1, rotate: note.rot }}
               viewport={{ once: true }}
               transition={{ type: 'spring', stiffness: 140, damping: 12, delay: 0.5 }}
@@ -80,7 +82,7 @@ export default function OurStory() {
 
         {/* Story text */}
         <div className="relative">
-          <Reveal>
+          <Reveal instant={instant}>
             <p className="font-hand text-3xl text-burnt">the people &amp; the passion</p>
             <h2 className="mt-2 text-5xl font-semibold leading-none tracking-tight text-cocoa sm:text-7xl">
               Our <span className="italic text-burnt">story</span>
@@ -100,7 +102,7 @@ export default function OurStory() {
 
           <div className="mt-8 space-y-5 text-lg leading-relaxed text-cocoa/85">
             {paragraphs.map((p, i) => (
-              <Reveal key={i} delay={0.1 + i * 0.1}>
+              <Reveal key={i} instant={instant} delay={0.1 + i * 0.1}>
                 <p className={p.placeholder ? 'font-hand text-2xl leading-snug text-burnt' : ''}>
                   {p.text}
                 </p>
@@ -108,7 +110,7 @@ export default function OurStory() {
             ))}
           </div>
 
-          <Reveal delay={0.3} className="mt-8 flex items-center gap-3">
+          <Reveal instant={instant} delay={0.3} className="mt-8 flex items-center gap-3">
             <Heart className="h-8 w-8 text-burnt" />
             <p className="font-hand text-3xl text-cocoa">{story.signoff}</p>
           </Reveal>

@@ -3,12 +3,7 @@ import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 import Loader, { shouldShowIntro } from './components/Loader.jsx';
 import Nav from './components/Nav.jsx';
-import Hero from './components/Hero.jsx';
-import FreshlyBaked from './components/FreshlyBaked.jsx';
-import LittleBox from './components/LittleBox.jsx';
-import OurStory from './components/OurStory.jsx';
-import InstagramGallery from './components/InstagramGallery.jsx';
-import Order from './components/Order.jsx';
+import HomeSections from './components/HomeSections.jsx';
 import Footer from './components/Footer.jsx';
 import CookiePage from './components/CookiePage.jsx';
 import { SITE } from './data/site.js';
@@ -22,6 +17,7 @@ export default function App() {
 
   // order = { [itemId]: quantity }, shared by the menu, boxes and order form.
   const [order, setOrder] = useState({});
+  const [chapter, setChapter] = useState(0);
   const setQty = useCallback((id, qty) => {
     setOrder((prev) => {
       const next = { ...prev };
@@ -92,7 +88,7 @@ export default function App() {
         Skip to content
       </a>
 
-      <Nav introDone={introDone} routeKey={view} />
+      <Nav introDone={introDone} routeKey={view} sectionsKey={chapter} />
 
       <main id="main">
         <AnimatePresence
@@ -120,18 +116,19 @@ export default function App() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
             >
-              <Hero introDone={introDone} />
-              <FreshlyBaked order={order} onAdd={addItem} />
-              {SITE.features.boxes && <LittleBox order={order} onAdd={addItem} />}
-              <OurStory />
-              <InstagramGallery />
-              <Order order={order} setQty={setQty} />
+              <HomeSections
+                order={order}
+                setQty={setQty}
+                onAdd={addItem}
+                introDone={introDone}
+                onChapter={setChapter}
+              />
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      <Footer />
+      {view === 'cookie' && <Footer />}
 
       {/* Floating reminder of what's in the order so far */}
       <AnimatePresence>

@@ -1,13 +1,24 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Gift, Plus } from 'lucide-react';
 import Photo from './Photo.jsx';
 import Reveal, { EASE } from './Reveal.jsx';
+import { asset } from '../lib/assets.js';
 import { Egg, Float, Heart, Sprinkles } from './Doodles.jsx';
 import { AVAILABILITY, BOXES } from '../data/products.js';
 import { formatPrice } from '../lib/format.js';
 
-export default function LittleBox({ order, onAdd }) {
+// `entered` (optional): when given, the photos slide in from the left and the copy/picker from the
+// right once it becomes true (the home page's scroll transition drives it).
+export default function LittleBox({ order, onAdd, entered }) {
+  const slide = typeof entered === 'boolean';
+  const off = typeof window === 'undefined' ? 600 : Math.round(window.innerWidth * 0.8);
+  const startedIn = useRef(entered).current; // already complete when the page opens: no slide
+  const side = (dir) => ({
+    initial: slide ? (startedIn ? { x: 0, opacity: 1 } : { x: dir * off, opacity: 0 }) : false,
+    animate: slide ? (entered ? { x: 0, opacity: 1 } : { x: dir * off, opacity: 0 }) : undefined,
+    transition: { duration: 1, ease: EASE },
+  });
   const [index, setIndex] = useState(0);
   const box = BOXES[index];
   if (!box) return null;
@@ -20,7 +31,7 @@ export default function LittleBox({ order, onAdd }) {
   return (
     <section
       id="boxes"
-      className="paper relative scroll-mt-16 overflow-hidden bg-butter py-24 sm:py-32"
+      className="paper relative flex min-h-[100svh] scroll-mt-16 items-center overflow-hidden bg-butter py-24 sm:py-32"
     >
       <Float className="absolute left-[4%] top-16 hidden md:block" duration={8}>
         <Egg className="h-14 w-14 text-cocoa/60" />
@@ -29,10 +40,21 @@ export default function LittleBox({ order, onAdd }) {
         <Sprinkles className="h-16 w-16 text-burnt" />
       </Float>
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-12">
+      <div className="relative mx-auto grid w-full max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-12">
         {/* Big, slightly tilted photo with a smaller one overlapping */}
-        <Reveal className="relative lg:col-span-7" y={40}>
+        <motion.div className="lg:col-span-7" {...side(-1)}>
+        <Reveal className="relative" y={40}>
           <div className="relative -rotate-2 overflow-hidden rounded-[2.5rem] border-[8px] border-vanilla bg-vanilla shadow-paper">
+            {/* a small flower in the top-right corner; the scroll transition zooms into it */}
+            <img
+              data-flower-anchor
+              src={asset('images/transitions/flower.webp')}
+              alt=""
+              aria-hidden="true"
+              draggable="false"
+              className="pointer-events-none absolute right-4 top-4 z-10 w-8 sm:w-11"
+              style={{ filter: 'drop-shadow(0 3px 4px rgba(89,58,43,0.3))' }}
+            />
             <div className="aspect-[5/4]">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -78,9 +100,10 @@ export default function LittleBox({ order, onAdd }) {
             <Heart className="h-14 w-14 text-burnt" />
           </Float>
         </Reveal>
+        </motion.div>
 
         {/* Copy + interactive picker */}
-        <div className="lg:col-span-5">
+        <motion.div className="lg:col-span-5" {...side(1)}>
           <Reveal>
             <p className="flex items-center gap-2 font-hand text-3xl text-burnt">
               <Gift className="h-6 w-6" aria-hidden="true" /> a little box of happiness
@@ -180,7 +203,7 @@ export default function LittleBox({ order, onAdd }) {
               </AnimatePresence>
             </div>
           </Reveal>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

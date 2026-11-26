@@ -5,7 +5,7 @@ import Wordmark from './Wordmark.jsx';
 import { NAV_LINKS } from '../data/site.js';
 import { EASE } from './Reveal.jsx';
 
-export default function Nav({ introDone, routeKey }) {
+export default function Nav({ introDone, routeKey, sectionsKey }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState('home');
@@ -47,7 +47,7 @@ export default function Nav({ introDone, routeKey }) {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, [routeKey]);
+  }, [routeKey, sectionsKey]);
 
   const solid = scrolled || open;
 

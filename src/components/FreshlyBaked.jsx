@@ -62,7 +62,7 @@ export default function FreshlyBaked({ order, onAdd }) {
         tabIndex={0}
         role="region"
         aria-label="Freshly baked sweets. Scroll horizontally to see more."
-        className="no-scrollbar edge-pad relative mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-pl-5 pb-10 pt-2"
+        className="slim-scrollbar edge-pad relative mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-pl-5 pb-10 pt-2"
       >
         {PRODUCTS.map((p, i) => {
           const price = formatPrice(p.price);
