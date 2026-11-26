@@ -4,10 +4,11 @@ import { ArrowLeft, ArrowRight, Check, Link as LinkIcon } from 'lucide-react';
 import PlaidPhoto, { CookieOnPlaid } from './PlaidPhoto.jsx';
 import Lightbox from './Lightbox.jsx';
 import { EASE } from './Reveal.jsx';
-import { Flower, Float, Heart, Sprinkles } from './Doodles.jsx';
-import { AVAILABILITY, COOKIE_PAGES } from '../data/products.js';
+import { Heart } from './Doodles.jsx';
+import { AVAILABILITY, COOKIE_PAGES, isUnavailable, POPULAR, POPULAR_BADGE } from '../data/products.js';
 import { SITE } from '../data/site.js';
 import { cookieHref, shareUrl } from '../lib/router.js';
+import { asset } from '../lib/assets.js';
 import { formatPrice } from '../lib/format.js';
 
 const pageVariants = {
@@ -78,6 +79,27 @@ function Neighbour({ cookie, direction }) {
 export default function CookiePage({ cookie, qty, onOrder }) {
   const index = COOKIE_PAGES.findIndex((c) => c.slug === cookie.slug);
   const count = COOKIE_PAGES.length;
+  // The embossed frame is sized so a whole number of copies fits the card exactly (never cut off).
+  const embossRef = useRef(null);
+  const [embossSize, setEmbossSize] = useState('100% auto');
+  useEffect(() => {
+    const el = embossRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const ratio = 860 / 667; // tile height / width
+    const fit = () => {
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      if (!w || !h) return;
+      const natural = w * ratio;
+      const lo = Math.max(1, Math.floor(h / natural));
+      const best = [lo, lo + 1].reduce((a, n) => (Math.abs(Math.log(h / (n * natural))) < Math.abs(Math.log(h / (a * natural))) ? n : a), lo);
+      setEmbossSize(`100% ${(100 / best).toFixed(3)}%`);
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [cookie.slug]);
   const prev = COOKIE_PAGES[(index - 1 + count) % count];
   const next = COOKIE_PAGES[(index + 1) % count];
 
@@ -139,23 +161,22 @@ export default function CookiePage({ cookie, qty, onOrder }) {
   };
 
   const price = formatPrice(cookie.price);
-  const avail = cookie.availability ? AVAILABILITY[cookie.availability] : null;
-  const soldOut = cookie.availability === 'sold-out';
+  const avail =
+    cookie.availability && cookie.availability !== 'available'
+      ? AVAILABILITY[cookie.availability]
+      : POPULAR.has(cookie.id)
+        ? POPULAR_BADGE
+        : null;
+  const soldOut = isUnavailable(cookie);
 
   return (
-    <div className="relative overflow-hidden bg-cream pb-24 pt-24 sm:pt-28">
+    <div
+      className="relative overflow-hidden bg-[#3b2217] bg-cover bg-center px-9 pb-24 pt-24 sm:px-14 sm:pt-28"
+      style={{ backgroundImage: `url(${asset('images/menu-bg.webp')})` }}
+    >
       {/* soft decorative shapes */}
-      <div aria-hidden="true" className="absolute -left-24 top-24 h-72 w-72 rounded-full bg-blush/70" />
-      <div aria-hidden="true" className="absolute -right-20 top-[34rem] h-64 w-64 rounded-full bg-sage/25" />
-      <Float className="absolute left-[5%] top-40 hidden lg:block" duration={8}>
-        <Heart className="h-10 w-10 text-rose" />
-      </Float>
-      <Float className="absolute right-[6%] top-32 hidden lg:block" delay={1} duration={7}>
-        <Sprinkles className="h-12 w-12 text-rose/80" />
-      </Float>
-      <Float className="absolute right-[8%] top-[46rem] hidden lg:block" delay={2} duration={9}>
-        <Flower className="h-12 w-12 text-sage" />
-      </Float>
+      <div aria-hidden="true" className="hidden" />
+      <div aria-hidden="true" className="hidden" />
 
       <AnimatePresence mode="wait" custom={dir} initial>
         <motion.article
@@ -166,8 +187,62 @@ export default function CookiePage({ cookie, qty, onOrder }) {
           animate="center"
           exit="exit"
           aria-labelledby="cookie-name"
-          className="relative mx-auto max-w-6xl px-5 sm:px-8"
+          className="relative mx-auto max-w-6xl"
         >
+          {/* lace peeking out behind the left and right of the card: overlapping pieces read as one long strip */}
+          {['left', 'right'].map((side) => (
+            <div
+              key={side}
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 z-0 w-20 overflow-hidden"
+              style={{
+                [side]: '-2.1rem',
+                WebkitMaskImage: 'linear-gradient(to bottom, #000 0, #000 calc(100% - 7rem), transparent 100%)',
+                maskImage: 'linear-gradient(to bottom, #000 0, #000 calc(100% - 7rem), transparent 100%)',
+              }}
+            >
+              {Array.from({ length: 14 }, (_, k) => (
+                <div
+                  key={k}
+                  className="absolute left-0 w-full"
+                  style={{
+                    top: `${(k * 30.9).toFixed(2)}rem`,
+                    paddingTop: '687%', // keeps the strip's shape (120 x 824)
+                    backgroundImage: `url(${asset('images/lace-v.webp')})`,
+                    backgroundSize: '100% 100%',
+                    transform: side === 'right' ? 'scaleX(-1)' : undefined,
+                    filter: 'drop-shadow(0 2px 3px rgba(30, 15, 8, 0.5))',
+                    WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, #000 7%, #000 93%, transparent 100%)',
+                    maskImage: 'linear-gradient(to bottom, transparent 0, #000 7%, #000 93%, transparent 100%)',
+                  }}
+                />
+              ))}
+            </div>
+          ))}
+          {/* the beige card: aged ivory paper, paper texture over it, fine gilt keyline */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 z-[1] overflow-hidden rounded-[2.5rem] shadow-paper"
+            style={{
+              backgroundColor: '#f3ead6',
+              backgroundImage: 'radial-gradient(ellipse at 50% 45%, rgba(255,250,238,0.9) 0%, rgba(255,250,238,0) 62%), radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(120,88,48,0.22) 100%)',
+            }}
+          >
+            <div
+              ref={embossRef}
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${asset('images/cookie-paper.webp')})`,
+                backgroundSize: embossSize,
+                backgroundRepeat: 'repeat-y',
+                backgroundPosition: 'center top',
+                opacity: 0.85,
+              }}
+            />
+            <div className="absolute inset-3 rounded-[2rem] border border-[#9b7a45]/45" />
+            <div className="absolute inset-[18px] rounded-[1.75rem] border border-[#9b7a45]/25" />
+          </div>
+          <div className="relative z-[2] px-5 py-8 sm:px-10 sm:py-12">
           {/* top bar */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <a href="#menu" className="btn btn-secondary !border-choc !text-choc hover:!bg-choc hover:!text-cream">
@@ -261,7 +336,7 @@ export default function CookiePage({ cookie, qty, onOrder }) {
                 onClick={() => onOrder(cookie.id)}
                 className="btn btn-primary group disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {soldOut ? 'Sold out' : 'Order some sweetness'}
+                {soldOut ? (cookie.availability === 'unavailable' ? 'Unavailable' : 'Sold out') : 'Order some sweetness'}
                 <Heart className="h-5 w-5 text-strawberry transition-transform duration-300 group-hover:scale-125" />
               </button>
               {qty > 0 && (
@@ -283,6 +358,7 @@ export default function CookiePage({ cookie, qty, onOrder }) {
               <Neighbour cookie={next} direction="next" />
             </div>
           </nav>
+          </div>
         </motion.article>
       </AnimatePresence>
 

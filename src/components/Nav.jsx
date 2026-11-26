@@ -4,6 +4,7 @@ import { ArrowUpRight, Menu, X } from 'lucide-react';
 import Wordmark from './Wordmark.jsx';
 import { NAV_LINKS } from '../data/site.js';
 import { EASE } from './Reveal.jsx';
+import { asset } from '../lib/assets.js';
 
 export default function Nav({ introDone, routeKey, sectionsKey }) {
   const [open, setOpen] = useState(false);
@@ -49,7 +50,7 @@ export default function Nav({ introDone, routeKey, sectionsKey }) {
     return () => io.disconnect();
   }, [routeKey, sectionsKey]);
 
-  const solid = scrolled || open;
+  const solid = true; // always beige
 
   return (
     <motion.header
@@ -68,9 +69,15 @@ export default function Nav({ introDone, routeKey, sectionsKey }) {
         <a
           href="#home"
           aria-label="The Sweets Exchange, back to top"
-          className="text-[1.05rem] text-cocoa"
+          className="flex items-center gap-3 text-[1.05rem] text-cocoa"
           onClick={() => setOpen(false)}
         >
+          <img
+            src={asset('apple-touch-icon.png')}
+            alt=""
+            aria-hidden="true"
+            className="h-12 w-12 shrink-0 rounded-full object-cover"
+          />
           <Wordmark />
         </a>
 

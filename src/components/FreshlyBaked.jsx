@@ -1,14 +1,15 @@
+import LaceSides from './LaceSides.jsx';
 import { useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Plus } from 'lucide-react';
 import Photo from './Photo.jsx';
 import { CookieOnPlaid } from './PlaidPhoto.jsx';
 import Reveal, { EASE } from './Reveal.jsx';
-import { Wheat } from './Doodles.jsx';
-import { AVAILABILITY, PRODUCTS } from '../data/products.js';
+import { AVAILABILITY, isUnavailable, POPULAR, POPULAR_BADGE, PRODUCTS } from '../data/products.js';
 import { SITE } from '../data/site.js';
 import { formatPrice } from '../lib/format.js';
 import { cookieHref } from '../lib/router.js';
+import { asset } from '../lib/assets.js';
 
 export default function FreshlyBaked({ order, onAdd }) {
   const scroller = useRef(null);
@@ -23,9 +24,14 @@ export default function FreshlyBaked({ order, onAdd }) {
   };
 
   return (
-    <section id="menu" className="scroll-mt-16 py-24 sm:py-32">
+    <section
+      id="menu"
+      className="scroll-mt-16 bg-[#3b2217] bg-cover bg-center py-24 sm:py-32"
+      style={{ backgroundImage: `url(${asset('images/menu-bg.webp')})`, '--lace': `url(${asset('images/lace.webp')})` }}
+    >
       <div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-8 px-5 sm:px-8">
-        <Reveal className="max-w-2xl">
+        <Reveal className="lace-panel max-w-2xl">
+          <LaceSides />
           <p className="font-hand text-3xl text-burnt">fresh from the kitchen</p>
           <h2 className="mt-2 text-5xl font-semibold leading-none tracking-tight text-cocoa sm:text-7xl">
             Freshly <span className="italic text-burnt">baked</span>
@@ -36,13 +42,12 @@ export default function FreshlyBaked({ order, onAdd }) {
           </p>
         </Reveal>
 
-        <div className="flex items-center gap-3">
-          <Wheat className="hidden h-14 w-14 text-burnt/70 sm:block" />
+        <div className="flex items-center gap-3 ">
           <button
             type="button"
             onClick={() => scrollByCard(-1)}
             aria-label="Previous sweets"
-            className="grid h-12 w-12 place-items-center rounded-full border-2 border-cocoa text-cocoa transition-colors hover:bg-cocoa hover:text-vanilla"
+            className="grid h-12 w-12 place-items-center rounded-full border-2 border-vanilla text-vanilla transition-colors hover:bg-vanilla hover:text-cocoa"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -50,7 +55,7 @@ export default function FreshlyBaked({ order, onAdd }) {
             type="button"
             onClick={() => scrollByCard(1)}
             aria-label="Next sweets"
-            className="grid h-12 w-12 place-items-center rounded-full border-2 border-cocoa bg-cocoa text-vanilla transition-colors hover:border-burnt hover:bg-burnt"
+            className="grid h-12 w-12 place-items-center rounded-full border-2 border-vanilla bg-vanilla text-cocoa transition-colors hover:border-burnt hover:bg-burnt hover:text-vanilla"
           >
             <ArrowRight className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -66,8 +71,14 @@ export default function FreshlyBaked({ order, onAdd }) {
       >
         {PRODUCTS.map((p, i) => {
           const price = formatPrice(p.price);
-          const avail = p.availability ? AVAILABILITY[p.availability] : null;
-          const soldOut = p.availability === 'sold-out';
+          // no "Available" tag; flagged flavors get "Popular", other statuses (sold out, limited...) still show
+          const avail =
+            p.availability && p.availability !== 'available'
+              ? AVAILABILITY[p.availability]
+              : POPULAR.has(p.id)
+                ? POPULAR_BADGE
+                : null;
+          const soldOut = isUnavailable(p);
           const qty = order[p.id] || 0;
           // Cookies with a page are clickable: photo, name and "details" link all open it.
           const href = p.page ? cookieHref(p.slug) : null;
@@ -97,7 +108,7 @@ export default function FreshlyBaked({ order, onAdd }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.85, delay: (i % 4) * 0.1, ease: EASE }}
-              className="group w-[78vw] max-w-[380px] shrink-0 snap-start sm:w-[360px]"
+              className="group w-[78vw] max-w-[380px] shrink-0 snap-start rounded-[2.25rem] bg-vanilla p-3 shadow-paper sm:w-[360px]"
             >
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-paper">
                 {href ? (
@@ -111,7 +122,7 @@ export default function FreshlyBaked({ order, onAdd }) {
                 ) : (
                   photo
                 )}
-                <span className="pointer-events-none absolute left-4 top-4 font-hand text-2xl text-vanilla drop-shadow">
+                <span className="pointer-events-none absolute left-4 top-4 font-hand text-2xl text-[#a37e96]">
                   no. {String(i + 1).padStart(2, '0')}
                 </span>
                 {avail && (
@@ -128,31 +139,28 @@ export default function FreshlyBaked({ order, onAdd }) {
                 )}
               </div>
 
-              <div className="px-1 pt-5">
-                <div className="flex items-baseline justify-between gap-4">
-                  <h3 className="text-2xl font-semibold leading-tight text-cocoa">
-                    {href ? (
-                      <a href={href} className="transition-colors duration-300 hover:text-burnt">
-                        {p.name}
-                      </a>
-                    ) : (
-                      p.name
-                    )}
-                  </h3>
-                  {price && (
-                    <span className="shrink-0 text-right font-serif text-xl leading-tight text-burnt">
-                      {price}
-                      {p.unit && (
-                        <span className="block font-sans text-xs font-bold uppercase tracking-wider text-cocoa/60">
-                          per {p.unit}
-                        </span>
-                      )}
-                    </span>
+              <div className="px-3 pb-3 pt-5">
+                <h3 className="text-center text-2xl font-semibold leading-tight text-cocoa">
+                  {href ? (
+                    <a href={href} className="transition-colors duration-300 hover:text-burnt">
+                      {p.name}
+                    </a>
+                  ) : (
+                    p.name
                   )}
-                </div>
-                <p className="mt-2 leading-relaxed text-cocoa/75">{p.description}</p>
+                </h3>
+                {price && (
+                  <p className="mt-2 text-center font-serif text-3xl leading-none text-burnt">
+                    {price}
+                    {p.unit && (
+                      <span className="mt-1.5 block font-sans text-xs font-bold uppercase tracking-[0.16em] text-cocoa/70">
+                        per {p.unit}
+                      </span>
+                    )}
+                  </p>
+                )}
 
-                <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
                 <button
                   type="button"
                   onClick={() => onAdd(p.id)}
@@ -170,7 +178,7 @@ export default function FreshlyBaked({ order, onAdd }) {
                   ) : (
                     <Plus className="h-4 w-4" aria-hidden="true" />
                   )}
-                  {soldOut ? 'Sold out' : qty ? `In your order · ${qty}` : 'Add to order'}
+                  {soldOut ? (p.availability === 'unavailable' ? 'Unavailable' : 'Sold out') : qty ? `In your order · ${qty}` : 'Add to order'}
                   <span className="sr-only"> {p.name}</span>
                 </button>
                 {href && (

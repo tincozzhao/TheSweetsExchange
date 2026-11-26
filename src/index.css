@@ -158,3 +158,28 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Cream panel (menu title) trimmed top and bottom with the supplied lace strip */
+.lace-panel {
+  position: relative;
+  padding: 3.25rem 2.6rem 3.25rem;
+  background-color: #fff5e4;
+  border-radius: 0.9rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+.lace-panel::before,
+.lace-panel::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-image: var(--lace); background-repeat: repeat-x; background-position: center; background-size: auto 56px;
+  filter: drop-shadow(0 1px 1.5px rgba(70, 40, 30, 0.55));
+  pointer-events: none;
+}
+.lace-panel::before { top: -28px; }
+.lace-panel::after { bottom: -28px; transform: scaleY(-1); }
+
+/* the swipe preview shows the destination page fully formed (no entrance animations) */
+.swipe-under [style*='opacity'] { opacity: 1 !important; transform: none !important; }

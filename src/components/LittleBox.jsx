@@ -4,9 +4,13 @@ import { Check, Gift, Plus } from 'lucide-react';
 import Photo from './Photo.jsx';
 import Reveal, { EASE } from './Reveal.jsx';
 import { asset } from '../lib/assets.js';
-import { Egg, Float, Heart, Sprinkles } from './Doodles.jsx';
 import { AVAILABILITY, BOXES } from '../data/products.js';
 import { formatPrice } from '../lib/format.js';
+
+// Soft polka-dot paper: a staggered grid of warm grey dots, drawn as vector so it stays sharp at any size.
+const DOTS = `url("data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="68" height="68" viewBox="0 0 68 68"><g fill="#cfc6ba"><circle cx="50" cy="17" r="4"/><circle cx="16" cy="51" r="4"/></g></svg>',
+)}")`;
 
 // `entered` (optional): when given, the photos slide in from the left and the copy/picker from the
 // right once it becomes true (the home page's scroll transition drives it).
@@ -31,14 +35,9 @@ export default function LittleBox({ order, onAdd, entered }) {
   return (
     <section
       id="boxes"
-      className="paper relative flex min-h-[100svh] scroll-mt-16 items-center overflow-hidden bg-butter py-24 sm:py-32"
+      className="relative flex min-h-[100svh] scroll-mt-16 items-center overflow-hidden py-24 sm:py-32"
+      style={{ backgroundColor: '#fef4e8', backgroundImage: DOTS, backgroundSize: '52px 52px' }}
     >
-      <Float className="absolute left-[4%] top-16 hidden md:block" duration={8}>
-        <Egg className="h-14 w-14 text-cocoa/60" />
-      </Float>
-      <Float className="absolute bottom-16 right-[6%] hidden md:block" delay={1} duration={7}>
-        <Sprinkles className="h-16 w-16 text-burnt" />
-      </Float>
 
       <div className="relative mx-auto grid w-full max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-12">
         {/* Big, slightly tilted photo with a smaller one overlapping */}
@@ -96,9 +95,6 @@ export default function LittleBox({ order, onAdd, entered }) {
               </AnimatePresence>
             </div>
           </div>
-          <Float className="absolute -left-5 -top-6" duration={6}>
-            <Heart className="h-14 w-14 text-burnt" />
-          </Float>
         </Reveal>
         </motion.div>
 

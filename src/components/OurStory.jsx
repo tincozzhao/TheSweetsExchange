@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import Photo from './Photo.jsx';
 import Reveal, { EASE } from './Reveal.jsx';
-import { Cookie, Float, Heart, Whisk } from './Doodles.jsx';
+import { Heart } from './Doodles.jsx';
 import { SITE } from '../data/site.js';
+import { asset } from '../lib/assets.js';
 
 // Rotation is applied through Motion (not Tailwind classes) because Motion
 // writes its own inline `transform`, which would otherwise wipe out a
@@ -25,15 +26,19 @@ export default function OurStory({ instant = false }) {
   const paragraphs = story.paragraphs.filter((p) => !p.placeholder || SITE.showPlaceholderFlags);
 
   return (
-    <section id="story" className="relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
-      <div className="mx-auto grid max-w-7xl items-center gap-16 px-5 sm:px-8 lg:grid-cols-2">
+    <section id="story" className="relative flex min-h-[100svh] scroll-mt-16 items-center justify-center overflow-hidden py-24 sm:py-28"
+      style={{ backgroundImage: `url(${asset('images/transitions/stripes.webp')})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+    >
+      <div className="mx-auto grid w-full max-w-[88rem] items-center justify-items-center gap-14 px-5 sm:px-10 lg:grid-cols-2 lg:gap-20">
         {/* Scrapbook collage */}
-        <div className="relative mx-auto h-[30rem] w-full max-w-xl sm:h-[34rem]">
+        <div className="relative mx-auto h-[32rem] w-full max-w-2xl sm:h-[42rem]">
           {FRAMES.map((frame, i) => {
             const photo = story.photos[i] || {};
             return (
               <motion.figure
                 key={i}
+                data-story-polaroid={i}
+                data-rot={frame.rot}
                 initial={instant ? false : { opacity: 0, y: 50, rotate: frame.rot }}
                 whileInView={{ opacity: 1, y: 0, rotate: frame.rot }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -75,21 +80,18 @@ export default function OurStory({ instant = false }) {
             </motion.p>
           ))}
 
-          <Float className="absolute -left-3 bottom-[36%] z-30" duration={7}>
-            <Cookie className="h-16 w-16 text-cocoa" />
-          </Float>
         </div>
 
         {/* Story text */}
-        <div className="relative">
-          <Reveal instant={instant}>
-            <p className="font-hand text-3xl text-burnt">the people &amp; the passion</p>
-            <h2 className="mt-2 text-5xl font-semibold leading-none tracking-tight text-cocoa sm:text-7xl">
+        <div className="relative mx-auto flex w-full max-w-2xl flex-col items-center text-center">
+          <Reveal instant={instant} className="flex flex-col items-center">
+            <p className="font-hand text-4xl text-burnt">the people &amp; the passion</p>
+            <h2 className="mt-2 text-6xl font-semibold leading-none tracking-tight text-cocoa sm:text-8xl">
               Our <span className="italic text-burnt">story</span>
             </h2>
             <svg
               viewBox="0 0 220 14"
-              className="mt-4 h-3 w-48 text-strawberry"
+              className="mx-auto mt-5 h-4 w-56 text-strawberry"
               fill="none"
               stroke="currentColor"
               strokeWidth="4"
@@ -100,7 +102,7 @@ export default function OurStory({ instant = false }) {
             </svg>
           </Reveal>
 
-          <div className="mt-8 space-y-5 text-lg leading-relaxed text-cocoa/85">
+          <div className="mt-8 space-y-6 text-xl leading-relaxed text-cocoa/85 sm:text-2xl">
             {paragraphs.map((p, i) => (
               <Reveal key={i} instant={instant} delay={0.1 + i * 0.1}>
                 <p className={p.placeholder ? 'font-hand text-2xl leading-snug text-burnt' : ''}>
@@ -110,14 +112,11 @@ export default function OurStory({ instant = false }) {
             ))}
           </div>
 
-          <Reveal instant={instant} delay={0.3} className="mt-8 flex items-center gap-3">
-            <Heart className="h-8 w-8 text-burnt" />
-            <p className="font-hand text-3xl text-cocoa">{story.signoff}</p>
+          <Reveal instant={instant} delay={0.3} className="mt-10 flex items-center justify-center gap-3">
+            <Heart className="h-9 w-9 text-burnt" />
+            <p className="font-hand text-4xl text-cocoa">{story.signoff}</p>
           </Reveal>
 
-          <Float className="absolute -right-2 -top-10 hidden sm:block" delay={1} duration={8}>
-            <Whisk className="h-16 w-16 text-cocoa/60" />
-          </Float>
         </div>
       </div>
     </section>

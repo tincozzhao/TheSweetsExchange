@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, Instagram } from 'lucide-react';
 import Photo from './Photo.jsx';
 import Reveal, { EASE } from './Reveal.jsx';
-import { Float, Heart } from './Doodles.jsx';
+import { Heart } from './Doodles.jsx';
 import { GALLERY, SITE } from '../data/site.js';
 
 // Editorial grid: 4 columns x 3 rows on larger screens, filled exactly by 7 tiles.
@@ -17,20 +17,26 @@ const LAYOUT = [
 ];
 const TONES = ['butter', 'pink', 'beige', 'orange', 'butter', 'pink', 'beige'];
 
-export default function InstagramGallery() {
+// `held` (optional): true while the page transition is still bringing the photos in - the tiles stay
+// invisible and the text waits off to the sides; false slides the text in from the sides.
+export default function InstagramGallery({ held }) {
+  const fancy = held !== undefined;
+  const side = (x) => (fancy ? { initial: false, animate: held ? { opacity: 0, x } : { opacity: 1, x: 0 }, transition: { duration: 0.7, ease: EASE } } : null);
   const { handle, url } = SITE.instagram;
 
   return (
     <section id="gallery" className="relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <Reveal className="flex flex-wrap items-end justify-between gap-6">
-          <div>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="rounded-[2.5rem] bg-vanilla/90 p-5 shadow-paper backdrop-blur-sm sm:p-10">
+        <Reveal className="flex flex-wrap items-end justify-between gap-6" instant={fancy}>
+          <motion.div {...side(-90)}>
             <p className="font-hand text-3xl text-burnt">follow along</p>
             <h2 className="mt-2 text-5xl font-semibold leading-none tracking-tight text-cocoa sm:text-7xl">
               On the <span className="italic text-burnt">&lsquo;gram</span>
             </h2>
-          </div>
-          <a
+          </motion.div>
+          <motion.a
+            {...side(90)}
             href={url}
             target="_blank"
             rel="noopener noreferrer"
@@ -42,18 +48,20 @@ export default function InstagramGallery() {
               aria-hidden="true"
             />
             <span className="sr-only"> (opens in a new tab)</span>
-          </a>
+          </motion.a>
         </Reveal>
 
         <div className="mt-12 grid auto-rows-[9.5rem] grid-flow-dense grid-cols-2 gap-3 sm:auto-rows-[12rem] sm:gap-4 md:auto-rows-[13rem] md:grid-cols-4">
           {GALLERY.slice(0, LAYOUT.length).map((item, i) => (
             <motion.a
               key={i}
+              data-gallery-tile={i}
+              style={fancy && held ? { visibility: 'hidden' } : undefined}
               href={url}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${item.caption || 'View this photo'} on Instagram, @${handle} (opens in a new tab)`}
-              initial={{ opacity: 0, y: 36, scale: 0.96 }}
+              initial={fancy ? false : { opacity: 0, y: 36, scale: 0.96 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.8, delay: (i % 4) * 0.08, ease: EASE }}
@@ -81,16 +89,14 @@ export default function InstagramGallery() {
           ))}
         </div>
 
-        <Reveal className="mt-10 text-center">
-          <p className="font-hand text-3xl text-cocoa/80">
+        <Reveal className="mt-10 text-center" instant={fancy}>
+          <motion.p {...side(-90)} className="font-hand text-3xl text-cocoa/80">
             more crumbs &amp; cuteness over on Instagram &rarr;
-          </p>
+          </motion.p>
         </Reveal>
+        </div>
       </div>
 
-      <Float className="absolute right-[4%] top-20 hidden md:block" duration={8}>
-        <Heart className="h-12 w-12 text-strawberry" />
-      </Float>
     </section>
   );
 }

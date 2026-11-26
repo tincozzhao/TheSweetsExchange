@@ -1,10 +1,11 @@
+import LaceSides from './LaceSides.jsx';
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Copy, Instagram, Mail, Minus, Plus } from 'lucide-react';
 import Reveal, { EASE } from './Reveal.jsx';
-import { Cookie, Float, Whisk } from './Doodles.jsx';
 import { AVAILABILITY, ORDERABLE } from '../data/products.js';
 import { SITE } from '../data/site.js';
+import { asset } from '../lib/assets.js';
 import { formatPrice } from '../lib/format.js';
 import { buildMessage } from '../lib/orderMessage.js';
 
@@ -90,24 +91,20 @@ export default function Order({ order, setQty }) {
   return (
     <section
       id="order"
-      className="paper relative scroll-mt-16 overflow-hidden bg-beige py-24 sm:py-32"
+      className="relative scroll-mt-16 overflow-hidden bg-[#3b2217] bg-cover bg-center py-24 sm:py-32"
+      style={{ backgroundImage: `url(${asset('images/menu-bg.webp')})`, '--lace': `url(${asset('images/lace.webp')})` }}
     >
-      <Float className="absolute right-[3%] top-16 hidden lg:block" duration={8}>
-        <Cookie className="h-20 w-20 text-cocoa/70" />
-      </Float>
-      <Float className="absolute bottom-10 left-[3%] hidden lg:block" delay={1} duration={9}>
-        <Whisk className="h-16 w-16 text-burnt/80" />
-      </Float>
 
-      <div className="relative mx-auto grid max-w-7xl gap-14 px-5 sm:px-8 lg:grid-cols-12">
+      <div className="relative mx-auto max-w-4xl space-y-12 px-5 sm:px-8">
         {/* Info column */}
-        <div className="lg:col-span-4">
-          <Reveal>
+        <div className="text-center">
+          <Reveal className="lace-panel mx-auto max-w-3xl">
+            <LaceSides />
             <p className="font-hand text-3xl text-burnt">something sweet?</p>
             <h2 className="mt-2 text-5xl font-semibold leading-none tracking-tight text-cocoa sm:text-6xl">
               Place an <span className="italic text-burnt">order</span>
             </h2>
-            <p className="mt-6 text-lg leading-relaxed text-cocoa/80">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-cocoa/80">
               Pick what you&rsquo;d like, add your details, and send us your request. We&rsquo;ll reply to confirm
               everything &mdash; nothing is charged on this site.
             </p>
@@ -115,7 +112,7 @@ export default function Order({ order, setQty }) {
         </div>
 
         {/* Order form */}
-        <Reveal className="lg:col-span-8" delay={0.1}>
+        <Reveal delay={0.1}>
           <form
             onSubmit={(e) => e.preventDefault()}
             noValidate
@@ -130,7 +127,7 @@ export default function Order({ order, setQty }) {
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {ORDERABLE.map((item) => {
                   const qty = order[item.id] || 0;
-                  const soldOut = item.availability === 'sold-out';
+                  const soldOut = item.availability === 'sold-out' || item.availability === 'unavailable';
                   const price = formatPrice(item.price);
                   const avail = item.availability ? AVAILABILITY[item.availability] : null;
                   return (

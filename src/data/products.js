@@ -12,7 +12,7 @@
 //   name          product name
 //   description   short card text shown on the menu
 //   price, unit   e.g. 12 and 'box of 3' (price null hides the price)
-//   availability  'available' | 'limited' | 'preorder' | 'sold-out' | null
+//   availability  'available' | 'limited' | 'preorder' | 'sold-out' | 'unavailable' | null
 //   image         menu-card photo inside /public (or null)
 //   page          (optional) the product-page content, see below
 //
@@ -29,19 +29,25 @@ export const AVAILABILITY = {
   limited: { label: 'Limited batch', tone: 'bg-strawberry text-cocoa' },
   preorder: { label: 'Pre-order', tone: 'bg-beige text-cocoa' },
   'sold-out': { label: 'Sold out', tone: 'bg-cocoa text-vanilla' },
+  unavailable: { label: 'Unavailable', tone: 'bg-cocoa text-vanilla' },
 };
+
+// Flavors that get a "Popular" badge on their card and page.
+export const POPULAR = new Set(['smores', 'chocolate-chip']);
+export const isUnavailable = (item) => item.availability === 'sold-out' || item.availability === 'unavailable';
+export const POPULAR_BADGE = { label: 'Popular', tone: 'bg-butter text-cocoa' };
 
 const COOKIE_DIR = 'images/cookies';
 
 // Every flavor comes in a box of 3 cookies of the SAME flavor for $12.
-const flavor = ({ id, name, description, image = null, imageAlt = '', page = null }) => ({
+const flavor = ({ id, name, description, image = null, imageAlt = '', page = null, availability = 'unavailable' }) => ({
   id,
   slug: id,
   name,
   description,
   price: 12,
   unit: 'box of 3',
-  availability: 'available',
+  availability,
   image,
   imageAlt,
   page: page && {
@@ -103,6 +109,7 @@ export const PRODUCTS = [
   }),
   flavor({
     id: 'chocolate-chip',
+    availability: 'available',
     name: 'Chocolate Chip',
     description: 'Golden edges, a soft chewy center, chocolate chunks and flaky sea salt.',
     page: {
@@ -165,17 +172,19 @@ export const PRODUCTS = [
       insideAlt: 'A red velvet cookie broken in half, showing a red crumb and a layer of white frosting',
     },
   }),
-  // These two are still on the menu but don't have photos or a page yet.
-  flavor({
-    id: 'strawberry-shortcake',
-    name: 'Strawberry Shortcake',
-    description: 'Sweet strawberry shortcake flavors in a soft, homemade cookie.',
-  }),
-  flavor({
-    id: 'chocolate-strawberry',
-    name: 'Chocolate Strawberry',
-    description: 'Rich chocolate and sweet strawberry together in one cookie.',
-  }),
+  // Not a cookie, so it is not a box of 3: $15 per loaf. Add a photo with image: 'images/products/banana-bread.jpg'.
+  {
+    id: 'banana-bread',
+    slug: 'banana-bread',
+    name: 'Banana Bread',
+    description: 'A soft, moist homemade banana bread loaf, baked fresh.',
+    price: 15,
+    unit: 'loaf',
+    availability: 'available',
+    image: 'images/products/banana-bread.jpg',
+    imageAlt: 'A loaf of chocolate chunk banana bread',
+    page: null,
+  },
 ];
 
 // Only the cookies that have a page, in page order (used for previous / next).
@@ -189,7 +198,7 @@ export const BOXES = [
     name: 'Assorted Cookie Box',
     description: 'A box of 5–6 cookies, each one a different flavor, so everyone finds a favorite.',
     size: '5–6 cookies',
-    note: 'every cookie is a different flavor ♡',
+    note: 'every cookie is a different flavor',
     contents: [],
     price: 16,
     unit: 'box',
@@ -210,7 +219,7 @@ export const BOXES = [
     price: 12,
     unit: 'box of 3',
     availability: 'available',
-    image: 'images/gallery/cinnamon-rolls-1.jpg',
+    image: 'images/products/cinnamon-roll-main.jpg',
     imageAlt: 'A pan of freshly iced cinnamon rolls',
     detailImage: 'images/products/cinnamon-roll-close-up.jpg',
     detailAlt: 'Close-up of frosted cinnamon rolls with swirls of cinnamon',
