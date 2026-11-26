@@ -66,7 +66,7 @@ export const SITE = {
     // Three scrapbook photos. Example: { src: 'images/story/kitchen.jpg', alt: 'Trays of cookies cooling', caption: 'Sunday batch' }
     photos: [
       { src: 'images/story/tray.jpg', alt: 'S’mores cookies cooling on a wire rack over a baking tray', caption: 'fresh out of the oven' },
-      { src: 'images/story/cooling-rack.jpg', alt: 'Cookies with melted marshmallow on a cooling rack', caption: 'gooey centers' },
+      { src: 'images/story/cooling-rack.jpg', alt: 'Cookies with melted marshmallow on a cooling rack' },
       { src: 'images/story/close-up.jpg', alt: 'Close-up of chocolate chip cookies with flaky salt', caption: 'a little flaky salt' },
     ],
   },

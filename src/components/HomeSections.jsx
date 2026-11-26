@@ -389,7 +389,12 @@ function Animated({ order, setQty, onAdd, introDone, onChapter }) {
         maxK: 12,
         T: T_COOKIE,
         ms: 1800,
-        before: () => bringCardIntoView(lock),
+        before: () => {
+          // no pre-scroll animation: if the card is off screen, snap it into place at once so the
+          // zoom starts straight away, exactly like the flower
+          if (!cardInView()) setCardInstant();
+          lock(window.scrollY);
+        },
         settle: setCardInstant,
         measure: () => cardImg()?.getBoundingClientRect() ?? null,
         hide: () => {
