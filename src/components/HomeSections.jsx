@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { motion, useMotionValue, useMotionValueEvent, useReducedMotion } from 'framer-motion';
 import Hero from './Hero.jsx';
 import FreshlyBaked from './FreshlyBaked.jsx';
@@ -43,14 +43,30 @@ const T_FLOWER = {
 // Phones (narrower than Tailwind's md breakpoint) change page with buttons, never by scrolling.
 const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
 
-function NextButton({ children, onClick }) {
+function NextButton({ children, onClick, onBack, backLabel }) {
   return (
-    <div className="flex justify-center px-5 pb-16 pt-2 md:hidden">
-      <button type="button" onClick={onClick} className="btn btn-primary group">
-        {children}
-        <ArrowRight className="h-4 w-4" aria-hidden="true" />
-      </button>
+    <div className="flex flex-col items-center gap-3 px-5 pb-16 pt-2 md:hidden">
+      {children && (
+        <button type="button" onClick={onClick} className="btn btn-primary group">
+          {children}
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </button>
+      )}
+      {onBack && <BackButton onClick={onBack}>{backLabel}</BackButton>}
     </div>
+  );
+}
+
+function BackButton({ children, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="btn btn-secondary !border-choc !text-choc"
+    >
+      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+      {children}
+    </button>
   );
 }
 
@@ -593,17 +609,24 @@ function Animated({ order, setQty, onAdd, introDone, onChapter }) {
       {chapter === 1 && (
         <>
           <FreshlyBaked order={order} onAdd={onAdd} />
-          <NextButton onClick={() => startRef.current?.(1, 1)}>Check out our assorted cookie box</NextButton>
+          <NextButton onClick={() => startRef.current?.(1, 1)} onBack={() => startRef.current?.(1, -1)} backLabel="Back to home">
+            Check out our assorted cookie box
+          </NextButton>
         </>
       )}
       {chapter === 2 && SITE.features.boxes && (
         <>
           <LittleBox order={order} onAdd={onAdd} entered={boxesIn} />
-          <NextButton onClick={() => startRef.current?.(2, 1)}>See our story</NextButton>
+          <NextButton onClick={() => startRef.current?.(2, 1)} onBack={() => startRef.current?.(2, -1)} backLabel="Back to the menu">
+            See our story
+          </NextButton>
         </>
       )}
       {chapter === 3 && (
         <>
+          <div className="flex justify-center px-5 pt-20 md:hidden">
+            <BackButton onClick={() => startRef.current?.(3, -1)}>Back to the boxes</BackButton>
+          </div>
           <motion.div
             initial={storyIn ? { opacity: 1, x: 0 } : { opacity: 0, x: 80 }}
             animate={storyIn ? { opacity: 1, x: 0 } : { opacity: 0, x: 80 }}
