@@ -27,7 +27,7 @@ export default function OurStory({ instant = false }) {
 
   return (
     <section id="story" className="relative flex min-h-[100svh] scroll-mt-16 items-center justify-center overflow-hidden py-24 sm:py-28"
-      style={{ backgroundImage: `url(${asset('images/transitions/stripes.webp')})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      style={{ backgroundImage: `url(${asset('images/transitions/stripes-pink.webp')})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
       <div className="mx-auto grid w-full max-w-[88rem] items-center justify-items-center gap-14 px-5 sm:px-10 lg:grid-cols-2 lg:gap-20">
         {/* Scrapbook collage */}
